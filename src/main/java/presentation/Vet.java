@@ -1,6 +1,7 @@
 package presentation;
 
 import domain.entities.*;
+import domain.exceptions.AdoptionException;
 import domain.interfaces.VetAdmin;
 import domain.repositories.AdoptionRepository;
 
@@ -36,12 +37,27 @@ public class Vet implements VetAdmin {
 
     @Override
     public void registerAdoption(Adopter adopter, Pet pet) {
-        Adoption adoption = employee.registerAdoption(adopter, pet);
-        adoption.processAdoption();
-        adoptionRepository.save(adoption);
-        adopter.setAdoption(adoption);
-        adopter.setAdoptedPet(pet);
-        Ticket ticket = adoption.generateTicket();
-        ticket.print();
+        try {
+            if (!this.pets.contains(pet)) {
+                throw AdoptionException.PetNotAvailable("Pet is not available in the vet");
+            }
+
+            if (adopter.getAge() < 18) {
+                throw AdoptionException.InvalidCredentials("Adopter must be of legal age");
+            }
+
+            if (adopter.getAddress() == null) {
+                throw AdoptionException.InvalidCredentials("Adopter must have an address");
+            }
+
+            Adoption adoption = employee.registerAdoption(adopter, pet);
+            adoptionRepository.save(adoption);
+            adopter.setAdoption(adoption);
+            adopter.setAdoptedPet(pet);
+            adoption.processAdoption();
+
+        } catch (AdoptionException e) {
+            System.out.println("Error in adoption process: " + e.getMessage());
+        }
     }
 }

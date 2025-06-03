@@ -21,7 +21,8 @@ public abstract class Adoption {
         registerEmployee();
         savePetData();
         specifiedSteps();
-        generateTicket();
+        Ticket ticket = generateTicket();
+        ticket.print();
     }
 
     private void registerAdopterData() {

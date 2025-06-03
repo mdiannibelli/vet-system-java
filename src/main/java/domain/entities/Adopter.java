@@ -6,8 +6,14 @@ public class Adopter extends Person {
     Pet adoptedPet;
     Adoption adoption;
 
-    public Adopter(String name, int age, String address, Date birthdate) {
-        super(name, age, address, birthdate);
+    public Adopter(String name, int age, Date birthDate, String address) {
+        super(name, age, birthDate, address );
+        this.adoptedPet = null;
+        this.adoption = null;
+    }
+
+    public Adopter(String name, int age, Date birthDate) {
+        super(name, age, birthDate, null );
         this.adoptedPet = null;
         this.adoption = null;
     }

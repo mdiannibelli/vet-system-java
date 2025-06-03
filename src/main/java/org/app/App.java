@@ -1,10 +1,9 @@
 package org.app;
 
-import domain.entities.Adopter;
-import domain.entities.Dog;
-import domain.entities.Employee;
+import domain.entities.*;
 import domain.entities.healthstates.Healthy;
 import domain.entities.healthstates.InObservation;
+import domain.interfaces.ContainerActions;
 import domain.repositories.AdoptionRepository;
 import enums.Species;
 import infraestructure.repositories.AdoptionRepositoryImpl;
@@ -32,8 +31,8 @@ public class App
         Adopter adopter = new Adopter(
                 "Pepito Suarez",
                 24,
-                "Av Rivadavia 5204",
-                new Date()
+                new Date(),
+                "Av Cabildo 592" // address required, otherwise it will throw an AdoptionException error
         );
 
         Dog dog = new Dog(
@@ -45,8 +44,14 @@ public class App
                 new InObservation()
         );
 
+        vet.registerPet(dog); // if we don't register the new pet, it will throw an AdoptionException error
+
         dog.setTemperature(32.4);
 
         vet.registerAdoption(adopter, dog);
+
+        ContainerObj<ContainerActions> container = new ContainerObj<>(new Bed());
+        System.out.println("¿It is empty? " + container.isEmpty());
+        System.out.println("¿It is a pet? " + container.getItem().isPet());
     }
 }
