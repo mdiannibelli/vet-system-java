@@ -43,6 +43,10 @@ public abstract class Pet {
         return this.state;
     }
 
+    public void setState(HealthState state) {
+        this.state = state;
+    }
+
     public double getTemperature() {
         return this.temperature;
     }

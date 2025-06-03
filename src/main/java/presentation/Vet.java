@@ -37,6 +37,7 @@ public class Vet implements VetAdmin {
     @Override
     public void registerAdoption(Adopter adopter, Pet pet) {
         Adoption adoption = employee.registerAdoption(adopter, pet);
+        adoption.processAdoption();
         adoptionRepository.save(adoption);
         adopter.setAdoption(adoption);
         adopter.setAdoptedPet(pet);

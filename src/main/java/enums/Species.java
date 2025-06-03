@@ -1,6 +1,7 @@
 package enums;
 
 public enum Species {
-    VERTEBRATE,
-    INVERTEBRATE
+    DOG,
+    CAT,
+    RABBIT
 }

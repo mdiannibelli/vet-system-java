@@ -1,5 +1,6 @@
 package domain.entities;
 
+import domain.factories.AdoptionFactory;
 import domain.interfaces.EmployeeManagement;
 
 import java.util.Date;
@@ -31,6 +32,6 @@ public class Employee extends Person implements EmployeeManagement {
 
     @Override
     public Adoption registerAdoption(Adopter adopter, Pet pet) {
-        return new Adoption(adopter, employeeInstance , pet);
+        return AdoptionFactory.create(adopter, employeeInstance , pet);
     }
 }

@@ -41,7 +41,7 @@ public class App
                 new Date(),
                 49.2,
                 37.5,
-                Species.VERTEBRATE,
+                Species.DOG,
                 new InObservation()
         );
 
