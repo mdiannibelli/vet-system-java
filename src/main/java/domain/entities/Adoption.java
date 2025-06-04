@@ -25,6 +25,18 @@ public abstract class Adoption {
         ticket.print();
     }
 
+    public Pet getPet() {
+        return this.pet;
+    }
+
+    public Adopter getAdopter() {
+        return this.adopter;
+    }
+
+    public LocalDate getDateAdoption() {
+        return this.dateAdoption;
+    }
+
     private void registerAdopterData() {
         System.out.println("Adopter: " + adopter.getName());
     }
