@@ -26,4 +26,8 @@ public abstract class Person {
     public String getAddress() {
         return address;
     }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
 }

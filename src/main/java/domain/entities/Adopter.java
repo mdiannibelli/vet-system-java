@@ -18,6 +18,7 @@ public class Adopter extends Person {
         this.adoption = null;
     }
 
+
     public Pet getAdoptedPet() {
         return adoptedPet;
     }
