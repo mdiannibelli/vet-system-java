@@ -5,6 +5,7 @@ import domain.entities.Employee;
 import infraestructure.daos.EmployeeIMPL;
 import views.EmployeeRegisterView;
 import views.LoginView;
+import exceptions.*;
 
 import javax.swing.*;
 import java.util.Date;
@@ -19,8 +20,8 @@ public class RegisterEmployeeController {
         try {
             this.employeeDAO = new EmployeeIMPL();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error at DAO initialization: " + e.getMessage());
-            throw new RuntimeException(e);
+            JOptionPane.showMessageDialog(null, "Error al inicializar DAO: " + e.getMessage());
+            throw new DatabaseException("No se pudo inicializar el DAO de empleados", e);
         }
     }
 
@@ -30,26 +31,28 @@ public class RegisterEmployeeController {
             String username = view.txtUsername.getText();
             String password = new String(view.txtPassword.getPassword());
 
+            // Validar campos obligatorios
             if (name.isEmpty() || username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "All fields are required.");
-                return;
+                throw new ValidationException("Todos los campos son obligatorios");
             }
 
+            // Validar que el usuario no exista
             if (employeeDAO.findExistAccount(username)) {
-                JOptionPane.showMessageDialog(null, "User already exists.");
-                return;
+                throw new EmployeeException("El usuario ya existe");
             }
 
             Employee emp = Employee.createNewEmployee(name, username, password, 30, "Generic Address", new Date(),
                     "Employee");
 
             employeeDAO.save(emp);
-            JOptionPane.showMessageDialog(null, "Register successful");
+            JOptionPane.showMessageDialog(null, "Registro exitoso");
             view.dispose();
             new LoginController(new LoginView());
 
+        } catch (ValidationException | EmployeeException | DatabaseException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error registering employee: " + e.getMessage());
+            throw new AdoptionException("Error inesperado al registrar empleado", e);
         }
     }
 }

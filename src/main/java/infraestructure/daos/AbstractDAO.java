@@ -1,6 +1,7 @@
 package infraestructure.daos;
 
 import config.DatabaseConnection;
+import exceptions.DatabaseException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,6 +32,7 @@ public abstract class AbstractDAO {
             System.out.println(entityName + " saved sucessfully.");
         } catch (SQLException e) {
             handleSQLException("Error at saving " + entityName.toLowerCase(), e);
+            throw new DatabaseException("No se pudo guardar " + entityName.toLowerCase(), e);
         }
     }
 
@@ -44,6 +46,7 @@ public abstract class AbstractDAO {
             }
         } catch (SQLException e) {
             handleSQLException("Error at finding " + entityName.toLowerCase() + " by ID", e);
+            throw new DatabaseException("No se pudo encontrar " + entityName.toLowerCase() + " con ID " + id, e);
         }
         return null;
     }
@@ -58,6 +61,7 @@ public abstract class AbstractDAO {
             }
         } catch (SQLException e) {
             handleSQLException("Error at searching " + entityName.toLowerCase() + " by name", e);
+            throw new DatabaseException("No se pudo buscar " + entityName.toLowerCase() + " con nombre " + name, e);
         }
         return null;
     }
@@ -79,6 +83,7 @@ public abstract class AbstractDAO {
             System.out.println("Table " + tableName.toUpperCase() + " created sucessfully.");
         } catch (SQLException e) {
             handleSQLException("Error at creating table " + tableName.toLowerCase(), e);
+            throw new DatabaseException("No se pudo crear la tabla " + tableName.toLowerCase(), e);
         }
     }
 

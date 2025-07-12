@@ -14,6 +14,7 @@ import infraestructure.daos.PetDAOImpl;
 import infraestructure.daos.AdoptionDAOImpl;
 import views.AdoptionRegisterView;
 import views.TicketAdoptionView;
+import exceptions.*;
 
 import javax.swing.*;
 import java.util.Date;
@@ -32,8 +33,8 @@ public class RegisterAdptionController {
             petDAO = new PetDAOImpl();
             adoptionDAO = new AdoptionDAOImpl();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error at DAO: " + e.getMessage());
-            throw new RuntimeException(e);
+            JOptionPane.showMessageDialog(null, "Error al inicializar DAOs: " + e.getMessage());
+            throw new DatabaseException("No se pudieron inicializar los DAOs", e);
         }
 
     }
@@ -65,24 +66,16 @@ public class RegisterAdptionController {
             view.txtRecommendations.setText("Recomendaciones para " + specieDisplayName + ":\n\n" + recommendations);
 
         } catch (IllegalArgumentException e) {
-            view.txtRecommendations.setText("Especie no válida. Use: DOG, CAT, RABBIT");
+            throw new SpeciesException(
+                    "Especie no válida: " + view.cmbSpecie.getSelectedItem() + ". Use: DOG, CAT, RABBIT", e);
         } catch (Exception e) {
-            view.txtRecommendations.setText("Error al obtener recomendaciones: " + e.getMessage());
+            throw new AdoptionException("Error al obtener recomendaciones", e);
         }
     }
 
     public void registerAdoption() {
         try {
-            if (view.txtAdopterName.getText().isEmpty() ||
-                    view.txtAdopterAge.getText().isEmpty() ||
-                    view.txtAdopterAddress.getText().isEmpty() ||
-                    view.txtPetName.getText().isEmpty() ||
-                    view.cmbSpecie.getSelectedItem() == null ||
-                    view.txtBirthdate.getText().isEmpty() ||
-                    view.txtWeight.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios");
-                return;
-            }
+            validateRequiredFields();
 
             // Adopter
             String name = view.txtAdopterName.getText();
@@ -113,11 +106,25 @@ public class RegisterAdptionController {
             view.dispose();
 
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Error: Asegúrese de que la edad y el peso sean números válidos.");
+            throw new ValidationException("La edad y el peso deben ser números válidos", e);
         } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(null, "Error: Formato de fecha inválido. Use YYYY-MM-DD");
+            throw new ValidationException("Formato de fecha inválido. Use YYYY-MM-DD", e);
+        } catch (SpeciesException | ValidationException | DatabaseException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al registrar adopción: " + e.getMessage());
+            throw new AdoptionException("Error inesperado al registrar adopción", e);
+        }
+    }
+
+    private void validateRequiredFields() {
+        if (view.txtAdopterName.getText().isEmpty() ||
+                view.txtAdopterAge.getText().isEmpty() ||
+                view.txtAdopterAddress.getText().isEmpty() ||
+                view.txtPetName.getText().isEmpty() ||
+                view.cmbSpecie.getSelectedItem() == null ||
+                view.txtBirthdate.getText().isEmpty() ||
+                view.txtWeight.getText().isEmpty()) {
+            throw new ValidationException("Todos los campos son obligatorios");
         }
     }
 }
