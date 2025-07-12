@@ -40,7 +40,8 @@ public class RegisterEmployeeController {
                 return;
             }
 
-            Employee emp = Employee.create(name, username, password, 30, "Generic Address", new Date(), "Employee");
+            Employee emp = Employee.createNewEmployee(name, username, password, 30, "Generic Address", new Date(),
+                    "Employee");
 
             employeeDAO.save(emp);
             JOptionPane.showMessageDialog(null, "Register successful");

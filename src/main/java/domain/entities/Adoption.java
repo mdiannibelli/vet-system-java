@@ -8,7 +8,6 @@ public abstract class Adoption {
     protected Pet pet;
     protected LocalDate dateAdoption;
 
-
     public Adoption(Adopter adopter, Employee employee, Pet pet) {
         this.adopter = adopter;
         this.employee = employee;
@@ -50,7 +49,29 @@ public abstract class Adoption {
     }
 
     public Ticket generateTicket() {
-        return new Ticket(this);
+        String ticketText = """
+                🐾 TICKET DE ADOPCIÓN 🐾
+
+                Empleado: %s
+                Adoptante: %s (%d años)
+                Dirección: %s
+
+                Mascota: %s (%s)
+                Nacimiento: %s | Peso: %.2f kg
+
+                Fecha de adopción: %s
+                """.formatted(
+                Employee.getInstance().getName(),
+                adopter.getName(),
+                adopter.getAge(),
+                adopter.getAddress(),
+                pet.getName(),
+                pet.getSpecie(),
+                pet.getBirthDate(),
+                pet.getWeight(),
+                this.getDateAdoption().toString());
+
+        return new Ticket(this, ticketText);
     }
 
     protected abstract void specifiedSteps();

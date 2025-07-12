@@ -81,34 +81,8 @@ public class RegisterAdptionController {
             // Adoption
             Adoption adoption = AdoptionFactory.create(adopter, Employee.getInstance(), pet);
             adoptionDAO.save(adoption);
-
-            // Generate ticket
             Ticket ticket = adoption.generateTicket();
-
-            // Mostrar ticket en la vista
-            String ticketText = """
-                    🐾 TICKET DE ADOPCIÓN 🐾
-
-                    Empleado: %s
-                    Adoptante: %s (%d años)
-                    Dirección: %s
-
-                    Mascota: %s (%s)
-                    Nacimiento: %s | Peso: %.2f kg
-
-                    Fecha de adopción: %s
-                    """.formatted(
-                    Employee.getInstance().getName(),
-                    adopter.getName(),
-                    adopter.getAge(),
-                    adopter.getAddress(),
-                    pet.getName(),
-                    pet.getSpecie(),
-                    pet.getBirthDate(),
-                    pet.getWeight(),
-                    adoption.getDateAdoption().toString());
-
-            new TicketAdoptionView(ticketText);
+            new TicketAdoptionView(ticket.getTicketText());
             view.dispose();
 
         } catch (NumberFormatException e) {

@@ -12,7 +12,6 @@ public class MainMenuView extends JFrame {
 
         MainMenuController mainMenuController = new MainMenuController(this);
 
-        // Listeners
         this.btnRegisterAdoption.addActionListener(e -> mainMenuController.openRegisterAdoption());
         this.btnLogOut.addActionListener(e -> mainMenuController.logOut());
     }

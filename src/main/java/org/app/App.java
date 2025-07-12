@@ -60,13 +60,13 @@ public class App {
             Employee existingEmployee = employeeDAO.findByUserAndPassword("admin", "admin");
             if (existingEmployee == null) {
                 // Crear empleado de prueba
-                Employee testEmployee = new Employee(
+                Employee testEmployee = Employee.createNewEmployee(
                         "Administrador",
                         "admin",
                         "admin",
                         30,
-                        new Date(),
                         "Dirección de Prueba",
+                        new Date(),
                         "Veterinario");
                 employeeDAO.save(testEmployee);
                 System.out.println("Empleado de prueba creado: admin/admin");

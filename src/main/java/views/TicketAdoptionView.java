@@ -7,12 +7,17 @@ public class TicketAdoptionView extends JFrame {
     public JTextArea areaTicket;
 
     public TicketAdoptionView(String ticketText) {
+        this.createView();
+        this.areaTicket.setText(ticketText);
+    }
+
+    private void createView() {
         setTitle("Adoption Ticket");
         setSize(400, 400);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        areaTicket = new JTextArea(ticketText);
+        areaTicket = new JTextArea();
         areaTicket.setEditable(false);
         areaTicket.setFont(new Font("Monospaced", Font.PLAIN, 14));
 

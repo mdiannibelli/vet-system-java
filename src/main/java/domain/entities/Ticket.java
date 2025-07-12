@@ -2,9 +2,11 @@ package domain.entities;
 
 public class Ticket {
     private final Adoption adoption;
+    private String ticketTxt;
 
-    public Ticket(Adoption adoption) {
+    public Ticket(Adoption adoption, String ticketTxt) {
         this.adoption = adoption;
+        this.ticketTxt = ticketTxt;
     }
 
     public void print() {
@@ -32,5 +34,9 @@ public class Ticket {
         System.out.println("----------------------");
         System.out.println("¡Thank you for adopting!");
         System.out.println("----------------------");
+    }
+
+    public String getTicketText() {
+        return this.ticketTxt;
     }
 }
