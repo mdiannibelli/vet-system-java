@@ -49,6 +49,13 @@ public abstract class Adoption {
     }
 
     public Ticket generateTicket() {
+        // Obtener las recomendaciones de cuidado
+        var careInstructions = pet.getState().getCareInstructions();
+        String recommendations = String.join("\n• ", careInstructions);
+        if (!recommendations.isEmpty()) {
+            recommendations = "• " + recommendations;
+        }
+
         String ticketText = """
                 🐾 TICKET DE ADOPCIÓN 🐾
 
@@ -60,6 +67,11 @@ public abstract class Adoption {
                 Nacimiento: %s | Peso: %.2f kg
 
                 Fecha de adopción: %s
+
+                📋 RECOMENDACIONES DE CUIDADO:
+                %s
+
+                ¡Gracias por adoptar! 🐕🐱🐰
                 """.formatted(
                 Employee.getInstance().getName(),
                 adopter.getName(),
@@ -69,7 +81,8 @@ public abstract class Adoption {
                 pet.getSpecie(),
                 pet.getBirthDate(),
                 pet.getWeight(),
-                this.getDateAdoption().toString());
+                this.getDateAdoption().toString(),
+                recommendations);
 
         return new Ticket(this, ticketText);
     }

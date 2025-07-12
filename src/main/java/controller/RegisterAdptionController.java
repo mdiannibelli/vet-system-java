@@ -3,6 +3,8 @@ package controller;
 import domain.entities.*;
 import domain.entities.healthstates.Healthy;
 import domain.factories.AdoptionFactory;
+import domain.factories.HealthStateFactory;
+import domain.interfaces.HealthState;
 import enums.Species;
 import dao.AdopterDAO;
 import dao.PetDAO;
@@ -37,13 +39,36 @@ public class RegisterAdptionController {
     }
 
     public void showRecommendations() {
-        String specie = view.txtSpecie.getText().toLowerCase();
-        String recommendations = switch (specie) {
-            case "dog" -> "Paseo diario, vacunas al día, buena alimentación.";
-            case "cat" -> "Espacios tranquilos, caja de arena limpia, juego diario.";
-            default -> "Consulta con el veterinario según la especie.";
-        };
-        view.txtRecommendations.setText(recommendations);
+        try {
+            String selectedSpecie = (String) view.cmbSpecie.getSelectedItem();
+            if (selectedSpecie == null || selectedSpecie.isEmpty()) {
+                view.txtRecommendations
+                        .setText("Seleccione una especie para ver las recomendaciones de cuidado específicas.");
+                return;
+            }
+
+            Species species = Species.valueOf(selectedSpecie);
+            HealthState healthState = HealthStateFactory.createHealthyState(species);
+            Pet tempPet = new AdoptablePet("Temp", new Date(), 1.0, 37.0, species, healthState);
+
+            var careInstructions = tempPet.getState().getCareInstructions();
+            String recommendations = String.join("\n• ", careInstructions);
+
+            if (!recommendations.isEmpty()) {
+                recommendations = "• " + recommendations;
+            }
+
+            String specieDisplayName = selectedSpecie.equals("DOG") ? "perro"
+                    : selectedSpecie.equals("CAT") ? "gato"
+                            : selectedSpecie.equals("RABBIT") ? "conejo" : selectedSpecie.toLowerCase();
+
+            view.txtRecommendations.setText("Recomendaciones para " + specieDisplayName + ":\n\n" + recommendations);
+
+        } catch (IllegalArgumentException e) {
+            view.txtRecommendations.setText("Especie no válida. Use: DOG, CAT, RABBIT");
+        } catch (Exception e) {
+            view.txtRecommendations.setText("Error al obtener recomendaciones: " + e.getMessage());
+        }
     }
 
     public void registerAdoption() {
@@ -52,10 +77,10 @@ public class RegisterAdptionController {
                     view.txtAdopterAge.getText().isEmpty() ||
                     view.txtAdopterAddress.getText().isEmpty() ||
                     view.txtPetName.getText().isEmpty() ||
-                    view.txtSpecie.getText().isEmpty() ||
+                    view.cmbSpecie.getSelectedItem() == null ||
                     view.txtBirthdate.getText().isEmpty() ||
                     view.txtWeight.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "All fields are required");
+                JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios");
                 return;
             }
 
@@ -73,9 +98,11 @@ public class RegisterAdptionController {
             Date petBirthdate = java.sql.Date.valueOf(view.txtBirthdate.getText());
             double petWeight = Double.parseDouble(view.txtWeight.getText());
 
-            Species petSpecies = Species.valueOf(view.txtSpecie.getText().toUpperCase());
+            String selectedSpecie = (String) view.cmbSpecie.getSelectedItem();
+            Species petSpecies = Species.valueOf(selectedSpecie);
+            HealthState healthState = HealthStateFactory.createHealthyState(petSpecies);
 
-            Pet pet = new AdoptablePet(petName, petBirthdate, petWeight, 37.0, petSpecies, new Healthy());
+            Pet pet = new AdoptablePet(petName, petBirthdate, petWeight, 37.0, petSpecies, healthState);
             petDAO.save(pet);
 
             // Adoption
@@ -86,11 +113,11 @@ public class RegisterAdptionController {
             view.dispose();
 
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Error: Please make sure the age and weight are valid numbers.");
+            JOptionPane.showMessageDialog(null, "Error: Asegúrese de que la edad y el peso sean números válidos.");
         } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(null, "Error: Invalid date format. Use YYYY-MM-DD");
+            JOptionPane.showMessageDialog(null, "Error: Formato de fecha inválido. Use YYYY-MM-DD");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error registering adoption: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al registrar adopción: " + e.getMessage());
         }
     }
 }

@@ -12,16 +12,23 @@ public class TicketAdoptionView extends JFrame {
     }
 
     private void createView() {
-        setTitle("Adoption Ticket");
-        setSize(400, 400);
+        setTitle("Ticket de Adopción");
+        setSize(500, 600);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
         areaTicket = new JTextArea();
         areaTicket.setEditable(false);
-        areaTicket.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        areaTicket.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        areaTicket.setLineWrap(true);
+        areaTicket.setWrapStyleWord(true);
+        areaTicket.setMargin(new Insets(10, 10, 10, 10));
 
-        add(new JScrollPane(areaTicket), BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(areaTicket);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        add(scrollPane, BorderLayout.CENTER);
         setVisible(true);
     }
 }

@@ -76,7 +76,8 @@ public class Vet implements VetAdmin {
 
     @Override
     public void listAdopterNames() {
-        List<String> adopterNames = this.getAdoptions().stream().map(adoption -> adoption.getAdopter().getName()).collect(Collectors.toList());
+        List<String> adopterNames = this.getAdoptions().stream().map(adoption -> adoption.getAdopter().getName())
+                .collect(Collectors.toList());
         System.out.println("-----------------------");
         System.out.println("Adopter names");
         System.out.println("-----------------------");
@@ -86,14 +87,14 @@ public class Vet implements VetAdmin {
     @Override
     public void countPetsPerSpecie() {
         int dogs = 0, cats = 0, rabbits = 0;
-        for(Pet pet : this.getPets()) {
-            if(pet.getSpecie().equals(Species.DOG)) {
+        for (Pet pet : this.getPets()) {
+            if (pet.getSpecie().equals(Species.DOG)) {
                 dogs++;
             }
-            if(pet.getSpecie().equals(Species.CAT)) {
+            if (pet.getSpecie().equals(Species.CAT)) {
                 cats++;
             }
-            if(pet.getSpecie().equals(Species.RABBIT)) {
+            if (pet.getSpecie().equals(Species.RABBIT)) {
                 rabbits++;
             }
         }
@@ -119,7 +120,8 @@ public class Vet implements VetAdmin {
 
     @Override
     public void findPetsWithMinimumWeight(double weight) {
-        HashSet<Pet> pets = this.getPets().stream().filter(pet -> pet.getWeight() > weight).collect(Collectors.toCollection(HashSet::new));
+        HashSet<Pet> pets = this.getPets().stream().filter(pet -> pet.getWeight() > weight)
+                .collect(Collectors.toCollection(HashSet::new));
         System.out.println("-----------------------");
         System.out.println("Pets with minimum weight");
         pets.forEach(pet -> System.out.println(pet.getName()));
@@ -136,10 +138,11 @@ public class Vet implements VetAdmin {
 
     @Override
     public void averageAdopterAges() {
-        Set<Adopter> adopters = this.getAdoptions().stream().map(adoption -> adoption.getAdopter()).collect(Collectors.toSet());
+        Set<Adopter> adopters = this.getAdoptions().stream().map(adoption -> adoption.getAdopter())
+                .collect(Collectors.toSet());
         List<Integer> ages = adopters.stream().map(Adopter::getAge).collect(Collectors.toList());
         int total = ages.stream().reduce(0, (prev, currentValue) -> prev + currentValue);
-        double average = total/ages.size();
+        double average = total / ages.size();
         System.out.println("-----------------------");
         System.out.println("Adopter age average: " + average);
         System.out.println("-----------------------");
@@ -150,10 +153,11 @@ public class Vet implements VetAdmin {
         LocalDate thirtyDaysAgo = LocalDate.now().minusDays(30);
         HashSet<Adoption> recentAdoptions = this.getAdoptions().stream()
                 .filter(adoption -> adoption.getDateAdoption().isAfter(thirtyDaysAgo))
-                        .collect(Collectors.toCollection(HashSet::new));
+                .collect(Collectors.toCollection(HashSet::new));
         System.out.println("-----------------------");
         System.out.println("Adoptions in the last 30 days: ");
-        recentAdoptions.forEach(adoption -> System.out.println(adoption.getAdopter().getName() + " adopted a pet in " + adoption.getDateAdoption()));
+        recentAdoptions.forEach(adoption -> System.out
+                .println(adoption.getAdopter().getName() + " adopted a pet in " + adoption.getDateAdoption()));
         System.out.println("-----------------------");
     }
 
