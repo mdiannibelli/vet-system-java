@@ -1,6 +1,9 @@
 package views;
 
 import javax.swing.*;
+
+import controller.LoginController;
+
 import java.awt.*;
 
 public class LoginView extends JFrame {
@@ -9,6 +12,19 @@ public class LoginView extends JFrame {
     public JButton loginBtn, registerBtn;
 
     public LoginView() {
+        this.createView();
+
+        LoginController loginController = new LoginController(this);
+
+        this.loginBtn.addActionListener(e -> {
+            String username = this.txtUsername.getText();
+            String password = new String(this.txtPassword.getPassword());
+            loginController.login(username, password);
+        });
+        this.registerBtn.addActionListener(e -> loginController.openRegister());
+    }
+
+    private void createView() {
         setTitle("Login - Vet");
         setSize(300, 200);
         setLocationRelativeTo(null);

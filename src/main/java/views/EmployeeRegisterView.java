@@ -1,5 +1,6 @@
 package views;
 
+import controller.RegisterEmployeeController;
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,6 +10,14 @@ public class EmployeeRegisterView extends JFrame {
     public JButton registerBtn;
 
     public EmployeeRegisterView() {
+        this.createView();
+
+        RegisterEmployeeController registerController = new RegisterEmployeeController(this);
+
+        this.registerBtn.addActionListener(e -> registerController.registerEmployee());
+    }
+
+    private void createView() {
         setTitle("Employee register");
         setSize(300, 250);
         setLocationRelativeTo(null);

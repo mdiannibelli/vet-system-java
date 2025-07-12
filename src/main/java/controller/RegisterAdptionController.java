@@ -34,11 +34,9 @@ public class RegisterAdptionController {
             throw new RuntimeException(e);
         }
 
-        view.registerBtn.addActionListener(e -> registerAdoption());
-        view.txtSpecie.addActionListener(e -> showRecommendations());
     }
 
-    private void showRecommendations() {
+    public void showRecommendations() {
         String specie = view.txtSpecie.getText().toLowerCase();
         String recommendations = switch (specie) {
             case "dog" -> "Paseo diario, vacunas al día, buena alimentación.";
@@ -48,8 +46,19 @@ public class RegisterAdptionController {
         view.txtRecommendations.setText(recommendations);
     }
 
-    private void registerAdoption() {
+    public void registerAdoption() {
         try {
+            if (view.txtAdopterName.getText().isEmpty() ||
+                    view.txtAdopterAge.getText().isEmpty() ||
+                    view.txtAdopterAddress.getText().isEmpty() ||
+                    view.txtPetName.getText().isEmpty() ||
+                    view.txtSpecie.getText().isEmpty() ||
+                    view.txtBirthdate.getText().isEmpty() ||
+                    view.txtWeight.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "All fields are required");
+                return;
+            }
+
             // Adopter
             String name = view.txtAdopterName.getText();
             int age = Integer.parseInt(view.txtAdopterAge.getText());
@@ -57,6 +66,7 @@ public class RegisterAdptionController {
             Date birthdate = java.sql.Date.valueOf(view.txtBirthdate.getText()); // formato: "yyyy-MM-dd"
 
             Adopter adopter = new Adopter(name, age, birthdate, address);
+            adopterDAO.save(adopter);
 
             // Pet
             String petName = view.txtPetName.getText();
@@ -101,8 +111,12 @@ public class RegisterAdptionController {
             new TicketAdoptionView(ticketText);
             view.dispose();
 
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Error: Please make sure the age and weight are valid numbers.");
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(null, "Error: Invalid date format. Use YYYY-MM-DD");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al registrar adopción: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error registering adoption: " + e.getMessage());
         }
     }
 }

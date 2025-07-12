@@ -9,19 +9,15 @@ public class MainMenuController {
 
     public MainMenuController(MainMenuView view) {
         this.view = view;
-
-        view.btnRegisterAdoption.addActionListener(e -> openRegisterAdoption());
-        view.btnLogOut.addActionListener(e -> logOut());
     }
 
-    private void openRegisterAdoption() {
+    public void openRegisterAdoption() {
         view.dispose();
         new RegisterAdptionController(new AdoptionRegisterView());
     }
 
-    private void logOut() {
+    public void logOut() {
         view.dispose();
         new LoginController(new LoginView());
     }
 }
-

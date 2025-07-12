@@ -10,28 +10,20 @@ import views.MainMenuView;
 import javax.swing.*;
 
 public class LoginController {
-    private final LoginView loginView;
     private final EmployeeDAO employeeDAO;
+    private final LoginView loginView;
 
     public LoginController(LoginView loginView) {
         this.loginView = loginView;
-
         try {
             this.employeeDAO = new EmployeeIMPL();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error at database: " + e.getMessage());
             throw new RuntimeException(e);
         }
-
-        // Listeners
-        loginView.loginBtn.addActionListener(e -> login());
-        loginView.registerBtn.addActionListener(e -> openRegister());
     }
 
-    private void login() {
-        String username = loginView.txtUsername.getText();
-        String password = new String(loginView.txtPassword.getPassword());
-
+    public void login(String username, String password) {
         Employee empleado = employeeDAO.findByUserAndPassword(username, password);
         if (empleado != null) {
             Employee.getInstance().setEmployee(empleado);
@@ -43,7 +35,7 @@ public class LoginController {
         }
     }
 
-    private void openRegister() {
+    public void openRegister() {
         loginView.dispose();
         new RegisterEmployeeController(new EmployeeRegisterView());
     }

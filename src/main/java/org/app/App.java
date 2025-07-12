@@ -32,7 +32,7 @@ public class App {
             return;
         }
 
-        new LoginController(new LoginView());
+        new LoginView();
     }
 
     private static void createAllTables() {

@@ -1,6 +1,9 @@
 package views;
 
 import javax.swing.*;
+
+import controller.RegisterAdptionController;
+
 import java.awt.*;
 
 public class AdoptionRegisterView extends JFrame {
@@ -10,6 +13,15 @@ public class AdoptionRegisterView extends JFrame {
     public JTextArea txtRecommendations;
 
     public AdoptionRegisterView() {
+        this.createView();
+
+        RegisterAdptionController registerController = new RegisterAdptionController(this);
+
+        this.registerBtn.addActionListener(e -> registerController.registerAdoption());
+        this.txtSpecie.addActionListener(e -> registerController.showRecommendations());
+    }
+
+    private void createView() {
         setTitle("Adoption Register");
         setSize(400, 600);
         setLocationRelativeTo(null);
