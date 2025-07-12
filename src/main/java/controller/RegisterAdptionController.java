@@ -14,7 +14,6 @@ import views.AdoptionRegisterView;
 import views.TicketAdoptionView;
 
 import javax.swing.*;
-import java.time.LocalDate;
 import java.util.Date;
 
 public class RegisterAdptionController {

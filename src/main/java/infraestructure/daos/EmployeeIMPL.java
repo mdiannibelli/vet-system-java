@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class EmployeeIMPL implements EmployeeDAO {
     private Connection connection;
@@ -50,5 +51,29 @@ public class EmployeeIMPL implements EmployeeDAO {
             System.err.println("Error at finding employee: " + e.getMessage());
         }
         return null;
+    }
+
+    @Override
+    public void createTable() {
+        try {
+            Statement stmt = DatabaseConnection.getConnection().createStatement();
+            stmt.execute("""
+                        CREATE TABLE IF NOT EXISTS employee (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            name VARCHAR(100),
+                            username VARCHAR(50) UNIQUE,
+                            password VARCHAR(100),
+                            age INT NOT NULL,
+                            birthdate DATE NOT NULL,
+                            address VARCHAR(100),
+                            charge VARCHAR(50) NOT NULL
+                        );
+                    """);
+
+            stmt.close();
+            System.out.println("Table EMPLOYEE created successfully.");
+        } catch (Exception e) {
+            System.out.println("Table employee not created. Error: " + e.getMessage());
+        }
     }
 }

@@ -6,4 +6,6 @@ public interface AdoptionDAO {
     void save(Adoption adoption);
 
     Adoption findById(int id);
+
+    void createTable();
 }

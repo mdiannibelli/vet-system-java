@@ -8,4 +8,6 @@ public interface PetDAO {
     Pet findById(int id);
 
     Pet findByName(String name);
+
+    void createTable();
 }

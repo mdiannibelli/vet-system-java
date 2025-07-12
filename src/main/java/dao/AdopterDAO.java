@@ -8,4 +8,6 @@ public interface AdopterDAO {
     Adopter findById(int id);
 
     Adopter findByName(String name);
+
+    void createTable();
 }

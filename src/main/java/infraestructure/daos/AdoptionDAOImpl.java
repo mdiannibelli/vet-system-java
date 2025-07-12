@@ -15,7 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.sql.Statement;
 
 public class AdoptionDAOImpl implements AdoptionDAO {
     private Connection connection;
@@ -68,5 +68,28 @@ public class AdoptionDAOImpl implements AdoptionDAO {
             System.err.println("Error al buscar adopción por ID: " + e.getMessage());
         }
         return null;
+    }
+
+    @Override
+    public void createTable() {
+        try {
+            Statement stmt = DatabaseConnection.getConnection().createStatement();
+
+            stmt.execute("""
+                        CREATE TABLE IF NOT EXISTS adoption (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            adopter_id INT,
+                            employee_id INT,
+                            pet_id INT,
+                            date_adoption DATE,
+                            adoption_type VARCHAR(50)
+                        );
+                    """);
+
+            stmt.close();
+            System.out.println("Table ADOPTION created successfully.");
+        } catch (Exception e) {
+            System.out.println("Table adoption not created. Error: " + e.getMessage());
+        }
     }
 }

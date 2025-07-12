@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class PetDAOImpl implements PetDAO {
     private Connection connection;
@@ -79,5 +80,27 @@ public class PetDAOImpl implements PetDAO {
             System.err.println("Error al buscar mascota por nombre: " + e.getMessage());
         }
         return null;
+    }
+
+    @Override
+    public void createTable() {
+        try {
+            Statement stmt = DatabaseConnection.getConnection().createStatement();
+            stmt.execute("""
+                        CREATE TABLE IF NOT EXISTS pet (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            name VARCHAR(100),
+                            birthdate DATE,
+                            weight DOUBLE,
+                            temperature DOUBLE,
+                            specie VARCHAR(50),
+                            health_state VARCHAR(50)
+                        );
+                    """);
+            stmt.close();
+            System.out.println("Table PET created successfully.");
+        } catch (Exception e) {
+            System.out.println("Table pet not created. Error: " + e.getMessage());
+        }
     }
 }

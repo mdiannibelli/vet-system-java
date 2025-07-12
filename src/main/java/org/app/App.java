@@ -1,32 +1,30 @@
 package org.app;
 
 import config.DatabaseConnection;
-/* import domain.entities.*;
-import domain.entities.healthstates.Healthy;
-import domain.entities.healthstates.InObservation;
-import domain.entities.healthstates.SpecialCare;
-import domain.interfaces.ContainerActions;
-import domain.repositories.AdoptionRepository;
-import enums.Species;
-import infraestructure.repositories.AdoptionRepositoryImpl;
-import presentation.Vet; */
 import controller.LoginController;
+import dao.AdopterDAO;
+import dao.AdoptionDAO;
+import dao.EmployeeDAO;
+import dao.PetDAO;
+import domain.entities.Employee;
+import infraestructure.daos.AdopterDAOImpl;
+import infraestructure.daos.AdoptionDAOImpl;
+import infraestructure.daos.EmployeeIMPL;
+import infraestructure.daos.PetDAOImpl;
 import views.LoginView;
 
 import java.sql.Connection;
 import java.util.Date;
 
-/**
- * Hello world!
- *
- */
 public class App {
     public static void main(String[] args) {
         try {
             Connection connection = DatabaseConnection.getConnection();
-            DatabaseConnection.createTables();
 
-            // Crear empleado de prueba si no existe
+            // Create all necessary tables
+            createAllTables();
+
+            // Create test employee if it does not exist
             createTestEmployee();
 
         } catch (Exception e) {
@@ -35,92 +33,34 @@ public class App {
         }
 
         new LoginController(new LoginView());
+    }
 
-        // Employee employee = Employee.create(
-        // "Juan Pérez",
-        // 35,
-        // "Av Nazca 2123",
-        // new Date(),
-        // "Encargado de Adopciones"
-        // );
-        // Vet vet = new Vet(employee, new AdoptionRepositoryImpl());
-        //
-        // Adopter adopter = new Adopter(
-        // "Pepito Suarez",
-        // 24,
-        // new Date(),
-        // "Av Cabildo 592" // address required, otherwise it will throw an
-        // AdoptionException error
-        // );
-        //
-        // Adopter adopter2 = new Adopter(
-        // "Maria Lopez",
-        // 65,
-        // new Date(),
-        // "Av Cabildo 592"
-        // );
-        //
-        // Dog dog = new Dog(
-        // "Firulais",
-        // new Date(),
-        // 49.2,
-        // 37.5,
-        // Species.DOG,
-        // new InObservation()
-        // );
-        //
-        // Cat cat = new Cat(
-        // "Botas",
-        // new Date(),
-        // 49.2,
-        // 37.5,
-        // Species.CAT,
-        // new Healthy()
-        // );
-        //
-        // Rabbit rabbit = new Rabbit(
-        // "Pituso",
-        // new Date(),
-        // 22.2,
-        // 25.5,
-        // Species.RABBIT,
-        // new SpecialCare()
-        // );
-        //
-        // vet.registerPet(dog); // if we don't register the new pet, it will throw an
-        // AdoptionException error
-        // vet.registerPet(cat);
-        // vet.registerPet(rabbit);
-        //
-        //
-        // dog.setTemperature(32.4);
-        //
-        // vet.registerAdoption(adopter, dog);
-        // vet.registerAdoption(adopter2, rabbit);
-        //
-        // ContainerObj<ContainerActions> container = new ContainerObj<>(new Bed());
-        // System.out.println("¿It is empty? " + container.isEmpty());
-        // System.out.println("¿It is a pet? " + container.getItem().isPet());
-        //
-        // vet.listPetsWithSpecialCare();
-        // vet.listAdopterNames();
-        // vet.countPetsPerSpecie();
-        // vet.findPetsWithMinimumWeight(30);
-        // vet.showPetsOrderByName();
-        // vet.averageAdopterAges();
-        // vet.filterRecentAdoptions();
-        // vet.transformPet();
+    private static void createAllTables() {
+        try {
+            EmployeeDAO employeeDAO = new EmployeeIMPL();
+            AdopterDAO adopterDAO = new AdopterDAOImpl();
+            PetDAO petDAO = new PetDAOImpl();
+            AdoptionDAO adoptionDAO = new AdoptionDAOImpl();
+
+            employeeDAO.createTable();
+            adopterDAO.createTable();
+            petDAO.createTable();
+            adoptionDAO.createTable();
+
+            System.out.println("All tables was created sucessfully");
+        } catch (Exception e) {
+            System.err.println("Error at creating tables: " + e.getMessage());
+        }
     }
 
     private static void createTestEmployee() {
         try {
-            dao.EmployeeDAO employeeDAO = new infraestructure.daos.EmployeeIMPL();
+            EmployeeDAO employeeDAO = new EmployeeIMPL();
 
-            // Verificar si ya existe un empleado
-            domain.entities.Employee existingEmployee = employeeDAO.findByUserAndPassword("admin", "admin");
+            Employee existingEmployee = employeeDAO.findByUserAndPassword("admin", "admin");
             if (existingEmployee == null) {
                 // Crear empleado de prueba
-                domain.entities.Employee testEmployee = new domain.entities.Employee(
+                Employee testEmployee = new Employee(
                         "Administrador",
                         "admin",
                         "admin",

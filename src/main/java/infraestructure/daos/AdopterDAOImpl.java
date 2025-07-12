@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class AdopterDAOImpl implements AdopterDAO {
     private Connection connection;
@@ -68,5 +69,27 @@ public class AdopterDAOImpl implements AdopterDAO {
             System.err.println("Error al buscar adoptante por nombre: " + e.getMessage());
         }
         return null;
+    }
+
+    @Override
+    public void createTable() {
+        try {
+            Statement stmt = DatabaseConnection.getConnection().createStatement();
+            // Adopter
+            stmt.execute("""
+                        CREATE TABLE IF NOT EXISTS adopter (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            name VARCHAR(100),
+                            age INT,
+                            birthdate DATE,
+                            address VARCHAR(150)
+                        );
+                    """);
+
+            stmt.close();
+            System.out.println("Table ADOPTER successfully.");
+        } catch (Exception e) {
+            System.out.println("Table adopter not created. Error: " + e.getMessage());
+        }
     }
 }
