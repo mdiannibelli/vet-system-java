@@ -1,106 +1,77 @@
 package infraestructure.daos;
 
-import config.DatabaseConnection;
 import dao.PetDAO;
 import domain.entities.Pet;
 import domain.entities.AdoptablePet;
 import domain.entities.healthstates.Healthy;
 import enums.Species;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-public class PetDAOImpl implements PetDAO {
-    private Connection connection;
+public class PetDAOImpl extends AbstractDAO implements PetDAO {
 
     public PetDAOImpl() throws SQLException {
-        connection = DatabaseConnection.getConnection();
+        super("pet", "Pet");
     }
 
     @Override
     public void save(Pet pet) {
-        String sql = "INSERT INTO pet (name, birthdate, weight, temperature, specie, health_state) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, pet.getName());
-            ps.setDate(2, new java.sql.Date(pet.getBirthDate().getTime()));
-            ps.setDouble(3, pet.getWeight());
-            ps.setDouble(4, pet.getTemperature());
-            ps.setString(5, pet.getSpecie().toString());
-            ps.setString(6, pet.getState().getClass().getSimpleName());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error al guardar mascota: " + e.getMessage());
-        }
+        String sql = getInsertSQL();
+        executeSave(sql,
+                pet.getName(),
+                pet.getBirthDate(),
+                pet.getWeight(),
+                pet.getTemperature(),
+                pet.getSpecie().toString(),
+                pet.getState().getClass().getSimpleName());
     }
 
     @Override
     public Pet findById(int id) {
-        String sql = "SELECT * FROM pet WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                Species specie = Species.valueOf(rs.getString("specie").toUpperCase());
-                return new AdoptablePet(
-                        rs.getString("name"),
-                        rs.getDate("birthdate"),
-                        rs.getDouble("weight"),
-                        rs.getDouble("temperature"),
-                        specie,
-                        new Healthy());
-            }
-        } catch (SQLException e) {
-            System.err.println("Error al buscar mascota por ID: " + e.getMessage());
-        }
-        return null;
+        return executeFindById(id, getFindByIdSQL());
     }
 
     @Override
     public Pet findByName(String name) {
-        String sql = "SELECT * FROM pet WHERE name = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, name);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                Species specie = Species.valueOf(rs.getString("specie").toUpperCase());
-                return new AdoptablePet(
-                        rs.getString("name"),
-                        rs.getDate("birthdate"),
-                        rs.getDouble("weight"),
-                        rs.getDouble("temperature"),
-                        specie,
-                        new Healthy());
-            }
-        } catch (SQLException e) {
-            System.err.println("Error al buscar mascota por nombre: " + e.getMessage());
-        }
-        return null;
+        return executeFindByName(name, getFindByNameSQL());
     }
 
     @Override
     public void createTable() {
-        try {
-            Statement stmt = DatabaseConnection.getConnection().createStatement();
-            stmt.execute("""
-                        CREATE TABLE IF NOT EXISTS pet (
-                            id INT AUTO_INCREMENT PRIMARY KEY,
-                            name VARCHAR(100),
-                            birthdate DATE,
-                            weight DOUBLE,
-                            temperature DOUBLE,
-                            specie VARCHAR(50),
-                            health_state VARCHAR(50)
-                        );
-                    """);
-            stmt.close();
-            System.out.println("Table PET created successfully.");
-        } catch (Exception e) {
-            System.out.println("Table pet not created. Error: " + e.getMessage());
-        }
+        executeCreateTable(getCreateTableSQL());
+    }
+
+    @Override
+    protected Pet mapResultSetToEntity(ResultSet rs) throws SQLException {
+        Species specie = Species.valueOf(rs.getString("specie").toUpperCase());
+        return new AdoptablePet(
+                rs.getString("name"),
+                rs.getDate("birthdate"),
+                rs.getDouble("weight"),
+                rs.getDouble("temperature"),
+                specie,
+                new Healthy());
+    }
+
+    @Override
+    protected String getInsertSQL() {
+        return "INSERT INTO " + tableName
+                + " (name, birthdate, weight, temperature, specie, health_state) VALUES (?, ?, ?, ?, ?, ?)";
+    }
+
+    @Override
+    protected String getCreateTableSQL() {
+        return """
+                    CREATE TABLE IF NOT EXISTS pet (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        name VARCHAR(100),
+                        birthdate DATE,
+                        weight DOUBLE,
+                        temperature DOUBLE,
+                        specie VARCHAR(50),
+                        health_state VARCHAR(50)
+                    );
+                """;
     }
 }

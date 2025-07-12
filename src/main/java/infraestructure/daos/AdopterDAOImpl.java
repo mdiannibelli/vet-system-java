@@ -1,95 +1,66 @@
 package infraestructure.daos;
 
-import config.DatabaseConnection;
 import dao.AdopterDAO;
 import domain.entities.Adopter;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-public class AdopterDAOImpl implements AdopterDAO {
-    private Connection connection;
+public class AdopterDAOImpl extends AbstractDAO implements AdopterDAO {
 
     public AdopterDAOImpl() throws SQLException {
-        connection = DatabaseConnection.getConnection();
+        super("adopter", "Adopter");
     }
 
     @Override
     public void save(Adopter adopter) {
-        String sql = "INSERT INTO adopter (name, age, birthdate, address) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, adopter.getName());
-            ps.setInt(2, adopter.getAge());
-            ps.setDate(3, new java.sql.Date(adopter.getBirthDate().getTime()));
-            ps.setString(4, adopter.getAddress());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error al guardar adoptante: " + e.getMessage());
-        }
+        String sql = getInsertSQL();
+        executeSave(sql,
+                adopter.getName(),
+                adopter.getAge(),
+                adopter.getBirthDate(),
+                adopter.getAddress());
     }
 
     @Override
     public Adopter findById(int id) {
-        String sql = "SELECT * FROM adopter WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return new Adopter(
-                        rs.getString("name"),
-                        rs.getInt("age"),
-                        rs.getDate("birthdate"),
-                        rs.getString("address"));
-            }
-        } catch (SQLException e) {
-            System.err.println("Error al buscar adoptante por ID: " + e.getMessage());
-        }
-        return null;
+        return executeFindById(id, getFindByIdSQL());
     }
 
     @Override
     public Adopter findByName(String name) {
-        String sql = "SELECT * FROM adopter WHERE name = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, name);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return new Adopter(
-                        rs.getString("name"),
-                        rs.getInt("age"),
-                        rs.getDate("birthdate"),
-                        rs.getString("address"));
-            }
-        } catch (SQLException e) {
-            System.err.println("Error al buscar adoptante por nombre: " + e.getMessage());
-        }
-        return null;
+        return executeFindByName(name, getFindByNameSQL());
     }
 
     @Override
     public void createTable() {
-        try {
-            Statement stmt = DatabaseConnection.getConnection().createStatement();
-            // Adopter
-            stmt.execute("""
-                        CREATE TABLE IF NOT EXISTS adopter (
-                            id INT AUTO_INCREMENT PRIMARY KEY,
-                            name VARCHAR(100),
-                            age INT,
-                            birthdate DATE,
-                            address VARCHAR(150)
-                        );
-                    """);
+        executeCreateTable(getCreateTableSQL());
+    }
 
-            stmt.close();
-            System.out.println("Table ADOPTER successfully.");
-        } catch (Exception e) {
-            System.out.println("Table adopter not created. Error: " + e.getMessage());
-        }
+    @Override
+    protected Adopter mapResultSetToEntity(ResultSet rs) throws SQLException {
+        return new Adopter(
+                rs.getString("name"),
+                rs.getInt("age"),
+                rs.getDate("birthdate"),
+                rs.getString("address"));
+    }
+
+    @Override
+    protected String getInsertSQL() {
+        return "INSERT INTO " + tableName + " (name, age, birthdate, address) VALUES (?, ?, ?, ?)";
+    }
+
+    @Override
+    protected String getCreateTableSQL() {
+        return """
+                    CREATE TABLE IF NOT EXISTS adopter (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        name VARCHAR(100),
+                        age INT,
+                        birthdate DATE,
+                        address VARCHAR(150)
+                    );
+                """;
     }
 }
