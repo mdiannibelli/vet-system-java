@@ -35,6 +35,11 @@ public class RegisterEmployeeController {
                 return;
             }
 
+            if (employeeDAO.findExistAccount(username)) {
+                JOptionPane.showMessageDialog(null, "User already exists.");
+                return;
+            }
+
             Employee emp = Employee.create(name, username, password, 30, "Generic Address", new Date(), "Employee");
 
             employeeDAO.save(emp);

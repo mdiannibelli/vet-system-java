@@ -7,5 +7,7 @@ public interface EmployeeDAO {
 
     Employee findByUserAndPassword(String username, String password);
 
+    boolean findExistAccount(String username);
+
     void createTable();
 }

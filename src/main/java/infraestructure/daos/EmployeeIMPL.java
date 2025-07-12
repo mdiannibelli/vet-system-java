@@ -76,4 +76,18 @@ public class EmployeeIMPL implements EmployeeDAO {
             System.out.println("Table employee not created. Error: " + e.getMessage());
         }
     }
+
+    @Override
+    public boolean findExistAccount(String username) {
+        String sql = "SELECT * FROM employee WHERE username = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+
+            return rs.next();
+        } catch (SQLException e) {
+            System.err.println("Error at finding employee: " + e.getMessage());
+        }
+        return false;
+    }
 }
