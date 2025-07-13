@@ -6,6 +6,7 @@ import domain.interfaces.EmployeeManagement;
 import java.util.Date;
 
 public class Employee extends Person implements EmployeeManagement {
+    private int id;
     private static Employee employeeInstance;
     private final String charge;
     private String username;
@@ -53,6 +54,10 @@ public class Employee extends Person implements EmployeeManagement {
 
     public void setEmployee(Employee employee) {
         employeeInstance = employee;
+    }
+
+    public int getId() {
+        return this.id;
     }
 
     @Override

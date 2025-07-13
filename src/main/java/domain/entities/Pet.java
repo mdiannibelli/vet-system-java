@@ -6,13 +6,13 @@ import enums.Species;
 import java.util.Date;
 
 public abstract class Pet {
+    private int id;
     protected String name;
     protected Date birthDate;
     protected double weight;
     protected double temperature;
     protected Species specie;
     protected HealthState state;
-
 
     public Pet(String name, Date birthDate, double weight, double temperature, Species specie, HealthState state) {
         this.name = name;
@@ -25,6 +25,14 @@ public abstract class Pet {
 
     public Species getSpecie() {
         return this.specie;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

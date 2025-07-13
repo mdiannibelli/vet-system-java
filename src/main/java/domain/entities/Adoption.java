@@ -45,6 +45,10 @@ public abstract class Adoption {
         return this.adopter;
     }
 
+    public Employee getEmployee() {
+        return this.employee;
+    }
+
     public LocalDate getDateAdoption() {
         return this.dateAdoption;
     }

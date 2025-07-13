@@ -11,7 +11,6 @@ import domain.entities.RabbitAdoption;
 import domain.entities.Adopter;
 import domain.entities.Employee;
 import domain.entities.Pet;
-import enums.Species;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,11 +26,10 @@ public class AdoptionDAOImpl extends AbstractDAO implements AdoptionDAO {
     @Override
     public void save(Adoption adoption) {
         String sql = getInsertSQL();
-        // Por simplicidad, usamos IDs fijos ya que no tenemos las tablas completas
         executeSave(sql,
-                1, // adopter_id
-                1, // employee_id
-                1, // pet_id
+                adoption.getAdopter().getId(),
+                adoption.getEmployee().getId(),
+                adoption.getPet().getId(),
                 java.sql.Date.valueOf(adoption.getDateAdoption()),
                 adoption.getClass().getSimpleName());
     }
