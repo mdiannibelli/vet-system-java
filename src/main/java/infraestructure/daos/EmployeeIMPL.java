@@ -86,4 +86,9 @@ public class EmployeeIMPL extends AbstractDAO implements EmployeeDAO {
                     );
                 """;
     }
+
+    @Override
+    public Employee findById(int id) {
+        return executeFindById(id, getFindByIdSQL());
+    }
 }

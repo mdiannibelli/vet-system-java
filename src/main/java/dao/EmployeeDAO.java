@@ -9,5 +9,7 @@ public interface EmployeeDAO {
 
     boolean findExistAccount(String username);
 
+    Employee findById(int id);
+
     void createTable();
 }

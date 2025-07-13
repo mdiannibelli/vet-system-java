@@ -1,6 +1,9 @@
 package infraestructure.daos;
 
+import dao.AdopterDAO;
 import dao.AdoptionDAO;
+import dao.EmployeeDAO;
+import dao.PetDAO;
 import domain.entities.Adoption;
 import domain.entities.DogAdoption;
 import domain.entities.CatAdoption;
@@ -46,13 +49,19 @@ public class AdoptionDAOImpl extends AbstractDAO implements AdoptionDAO {
     @Override
     protected Adoption mapResultSetToEntity(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
-        Adopter adopter = new Adopter("Mock Adopter", 25, new java.util.Date(), "Mock Address");
-        Employee employee = new Employee("Mock Employee", "user", "pass", 30, new java.util.Date(), "Address", "Vet");
-        Pet pet = new domain.entities.AdoptablePet("Mock Pet", new java.util.Date(), 5.0, 37.0, Species.DOG,
-                new domain.entities.healthstates.Healthy());
-
+        int adopterId = rs.getInt("adopter_id");
+        int petId = rs.getInt("pet_id");
+        int employeeId = rs.getInt("employee_id");
         LocalDate dateAdoption = rs.getDate("date_adoption").toLocalDate();
         String adoptionType = rs.getString("adoption_type");
+
+        AdopterDAO adopterDAO = new AdopterDAOImpl();
+        PetDAO petDAO = new PetDAOImpl();
+        EmployeeDAO employeeDAO = new EmployeeIMPL();
+
+        Adopter adopter = adopterDAO.findById(adopterId);
+        Pet pet = petDAO.findById(petId);
+        Employee employee = employeeDAO.findById(employeeId);
 
         return switch (adoptionType) {
             case "DogAdoption" -> new DogAdoption(id, adopter, employee, pet, dateAdoption);
