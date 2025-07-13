@@ -20,7 +20,8 @@ public class AdoptionsView extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        model = new DefaultTableModel(new String[] { "ID", "Adoptante", "Mascota", "Fecha" }, 0) {
+        model = new DefaultTableModel(new String[] { "ID", "Adoptante", "Mascota", "Tipo de mascota", "Estado de Salud",
+                "Peso", "Temperatura", "Fecha" }, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false; // No editable
@@ -65,6 +66,10 @@ public class AdoptionsView extends JFrame {
                     a.getId(),
                     a.getAdopter().getName(),
                     a.getPet().getName(),
+                    a.getPet().getSpecie(),
+                    a.getPet().getState().getClass().getSimpleName(),
+                    a.getPet().getWeight(),
+                    a.getPet().getTemperature(),
                     a.getDateAdoption()
             });
         }

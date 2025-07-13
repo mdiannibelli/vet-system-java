@@ -9,5 +9,7 @@ public interface PetDAO {
 
     Pet findByName(String name);
 
+    void updateHealthState(int petId, String healthState);
+
     void createTable();
 }
