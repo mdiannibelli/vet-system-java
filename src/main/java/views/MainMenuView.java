@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MainMenuView extends JFrame {
-    public JButton btnRegisterAdoption, btnLogOut;
+    public JButton btnRegisterAdoption, btnLogOut, btnShowAdoptions;
 
     public MainMenuView() {
         this.createView();
@@ -13,6 +13,7 @@ public class MainMenuView extends JFrame {
         MainMenuController mainMenuController = new MainMenuController(this);
 
         this.btnRegisterAdoption.addActionListener(e -> mainMenuController.openRegisterAdoption());
+        this.btnShowAdoptions.addActionListener(e -> mainMenuController.showAdoptions());
         this.btnLogOut.addActionListener(e -> mainMenuController.logOut());
     }
 
@@ -23,9 +24,11 @@ public class MainMenuView extends JFrame {
         setLayout(new FlowLayout());
 
         btnRegisterAdoption = new JButton("New adoption");
+        btnShowAdoptions = new JButton("Show Adoptions");
         btnLogOut = new JButton("Log out");
 
         add(btnRegisterAdoption);
+        add(btnShowAdoptions);
         add(btnLogOut);
 
         setVisible(true);

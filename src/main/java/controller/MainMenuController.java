@@ -1,6 +1,7 @@
 package controller;
 
 import views.AdoptionRegisterView;
+import views.AdoptionsView;
 import views.LoginView;
 import views.MainMenuView;
 
@@ -14,6 +15,11 @@ public class MainMenuController {
     public void openRegisterAdoption() {
         view.dispose();
         new RegisterAdptionController(new AdoptionRegisterView());
+    }
+
+    public void showAdoptions() {
+        view.dispose();
+        new AdoptionsControllers(new AdoptionsView());
     }
 
     public void logOut() {

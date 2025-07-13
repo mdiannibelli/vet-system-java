@@ -3,6 +3,7 @@ package domain.entities;
 import java.time.LocalDate;
 
 public abstract class Adoption {
+    protected int id;
     protected Adopter adopter;
     protected Employee employee;
     protected Pet pet;
@@ -15,6 +16,14 @@ public abstract class Adoption {
         this.dateAdoption = LocalDate.now();
     }
 
+    public Adoption(int id, Adopter adopter, Employee employee, Pet pet, LocalDate dateAdoption) {
+        this.id = id;
+        this.adopter = adopter;
+        this.employee = employee;
+        this.pet = pet;
+        this.dateAdoption = dateAdoption;
+    }
+
     public final void processAdoption() {
         registerAdopterData();
         registerEmployee();
@@ -22,6 +31,10 @@ public abstract class Adoption {
         specifiedSteps();
         Ticket ticket = generateTicket();
         ticket.print();
+    }
+
+    public int getId() {
+        return id;
     }
 
     public Pet getPet() {

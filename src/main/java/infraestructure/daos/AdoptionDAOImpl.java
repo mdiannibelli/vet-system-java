@@ -12,6 +12,8 @@ import enums.Species;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.time.LocalDate;
 
 public class AdoptionDAOImpl extends AbstractDAO implements AdoptionDAO {
 
@@ -43,20 +45,31 @@ public class AdoptionDAOImpl extends AbstractDAO implements AdoptionDAO {
 
     @Override
     protected Adoption mapResultSetToEntity(ResultSet rs) throws SQLException {
-        // Por simplicidad, creamos objetos mock ya que no tenemos las tablas completas
+        int id = rs.getInt("id");
         Adopter adopter = new Adopter("Mock Adopter", 25, new java.util.Date(), "Mock Address");
         Employee employee = new Employee("Mock Employee", "user", "pass", 30, new java.util.Date(), "Address", "Vet");
         Pet pet = new domain.entities.AdoptablePet("Mock Pet", new java.util.Date(), 5.0, 37.0, Species.DOG,
                 new domain.entities.healthstates.Healthy());
 
+        LocalDate dateAdoption = rs.getDate("date_adoption").toLocalDate();
         String adoptionType = rs.getString("adoption_type");
 
         return switch (adoptionType) {
-            case "DogAdoption" -> new DogAdoption(adopter, employee, pet);
-            case "CatAdoption" -> new CatAdoption(adopter, employee, pet);
-            case "RabbitAdoption" -> new RabbitAdoption(adopter, employee, pet);
-            default -> new DogAdoption(adopter, employee, pet);
+            case "DogAdoption" -> new DogAdoption(id, adopter, employee, pet, dateAdoption);
+            case "CatAdoption" -> new CatAdoption(id, adopter, employee, pet, dateAdoption);
+            case "RabbitAdoption" -> new RabbitAdoption(id, adopter, employee, pet, dateAdoption);
+            default -> new DogAdoption(id, adopter, employee, pet, dateAdoption);
         };
+    }
+
+    @Override
+    public List<Adoption> findAll() {
+        return executeFindAll("SELECT * FROM adoption");
+    }
+
+    @Override
+    public boolean deleteAdoption(int id) {
+        return deleteById(id, "adoption");
     }
 
     @Override

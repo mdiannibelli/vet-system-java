@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Clase abstracta base que implementa el patrón Template Method
@@ -84,6 +86,33 @@ public abstract class AbstractDAO {
         } catch (SQLException e) {
             handleSQLException("Error at creating table " + tableName.toLowerCase(), e);
             throw new DatabaseException("No se pudo crear la tabla " + tableName.toLowerCase(), e);
+        }
+    }
+
+    protected final <T> List<T> executeFindAll(String sql) {
+        List<T> results = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                results.add(mapResultSetToEntity(rs));
+            }
+        } catch (SQLException e) {
+            handleSQLException("Error al buscar todos los " + entityName.toLowerCase(), e);
+            throw new DatabaseException("No se pudo buscar todos los " + entityName.toLowerCase(), e);
+        }
+        return results;
+    }
+
+    protected final boolean deleteById(int id, String tableName) {
+        String sql = "DELETE FROM " + tableName + " WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            handleSQLException("Error al eliminar " + entityName.toLowerCase() + " por ID", e);
+            throw new DatabaseException("No se pudo eliminar " + entityName.toLowerCase() + " con ID " + id, e);
         }
     }
 
