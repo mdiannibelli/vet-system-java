@@ -9,9 +9,10 @@ import domain.entities.Adoption;
 public class AdoptionsView extends JFrame {
     private JTable table;
     private DefaultTableModel model;
-    private JButton btnDelete, btnBack;
+    private JButton btnDelete, btnBack, btnEditHealth;
     private DeleteListener deleteListener;
     private BackListener backListener;
+    private EditHealthListener editHealthListener;
 
     public AdoptionsView() {
         setTitle("Adopciones");
@@ -32,10 +33,12 @@ public class AdoptionsView extends JFrame {
         add(scrollPane, BorderLayout.CENTER);
 
         btnDelete = new JButton("Eliminar adopción");
+        btnEditHealth = new JButton("Editar Estado de Salud");
         btnBack = new JButton("Volver atras");
 
         JPanel panelBotones = new JPanel();
         panelBotones.add(btnDelete);
+        panelBotones.add(btnEditHealth);
         panelBotones.add(btnBack);
 
         add(panelBotones, BorderLayout.SOUTH);
@@ -47,6 +50,16 @@ public class AdoptionsView extends JFrame {
                 deleteListener.onDelete(id);
             } else {
                 JOptionPane.showMessageDialog(this, "Selecciona una adopción para eliminar.");
+            }
+        });
+
+        btnEditHealth.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow != -1 && editHealthListener != null) {
+                int adoptionId = (int) model.getValueAt(selectedRow, 0);
+                editHealthListener.onEditHealth(adoptionId);
+            } else {
+                JOptionPane.showMessageDialog(this, "Selecciona una adopción para editar el estado de salud.");
             }
         });
 
@@ -83,11 +96,19 @@ public class AdoptionsView extends JFrame {
         this.backListener = listener;
     }
 
+    public void setEditHealthListener(EditHealthListener listener) {
+        this.editHealthListener = listener;
+    }
+
     public interface DeleteListener {
         void onDelete(int id);
     }
 
     public interface BackListener {
         void onBack();
+    }
+
+    public interface EditHealthListener {
+        void onEditHealth(int adoptionId);
     }
 }

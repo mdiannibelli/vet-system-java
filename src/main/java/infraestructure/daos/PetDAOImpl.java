@@ -55,21 +55,40 @@ public class PetDAOImpl extends AbstractDAO implements PetDAO {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 // Crea el objeto Pet con los datos reales
-                return new AdoptablePet(
+                Species specie = Species.valueOf(rs.getString("specie"));
+
+                // Mapear el estado de salud desde la base de datos
+                String healthState = rs.getString("health_state");
+                domain.interfaces.HealthState state;
+
+                switch (healthState) {
+                    case "Healthy":
+                        state = new domain.entities.healthstates.Healthy();
+                        break;
+                    case "InObservation":
+                        state = new domain.entities.healthstates.InObservation();
+                        break;
+                    case "SpecialCare":
+                        state = new domain.entities.healthstates.SpecialCare();
+                        break;
+                    default:
+                        state = new domain.entities.healthstates.Healthy(); // Estado por defecto
+                }
+
+                AdoptablePet pet = new AdoptablePet(
                         rs.getString("name"),
                         rs.getDate("birthdate"),
                         rs.getDouble("weight"),
                         rs.getDouble("temperature"),
-                        Species.valueOf(rs.getString("specie")),
-                        // Aquí deberías mapear el estado de salud correctamente
-                        new Healthy() // O el estado real según el campo
-                );
+                        specie,
+                        state);
+                pet.setId(rs.getInt("id")); // Asignar el ID
+                return pet;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
-        // return executeFindById(id, getFindByIdSQL());
     }
 
     @Override
@@ -83,15 +102,54 @@ public class PetDAOImpl extends AbstractDAO implements PetDAO {
     }
 
     @Override
+    public void updateHealthState(int petId, String healthState) {
+        String sql = "UPDATE pet SET health_state = ? WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, healthState);
+            ps.setInt(2, petId);
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("Estado de salud actualizado correctamente para la mascota ID: " + petId);
+            } else {
+                System.out.println("No se encontró la mascota con ID: " + petId);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar el estado de salud: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     protected Pet mapResultSetToEntity(ResultSet rs) throws SQLException {
         Species specie = Species.valueOf(rs.getString("specie").toUpperCase());
-        return new AdoptablePet(
+
+        // Mapear el estado de salud desde la base de datos
+        String healthState = rs.getString("health_state");
+        domain.interfaces.HealthState state;
+
+        switch (healthState) {
+            case "Healthy":
+                state = new domain.entities.healthstates.Healthy();
+                break;
+            case "InObservation":
+                state = new domain.entities.healthstates.InObservation();
+                break;
+            case "SpecialCare":
+                state = new domain.entities.healthstates.SpecialCare();
+                break;
+            default:
+                state = new domain.entities.healthstates.Healthy(); // Estado por defecto
+        }
+
+        AdoptablePet pet = new AdoptablePet(
                 rs.getString("name"),
                 rs.getDate("birthdate"),
                 rs.getDouble("weight"),
                 rs.getDouble("temperature"),
                 specie,
-                new Healthy());
+                state);
+        pet.setId(rs.getInt("id")); // Asignar el ID
+        return pet;
     }
 
     @Override
